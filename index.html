@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SP Timeline — Agent-Based Simulation of Digital Payment Adoption</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
   :root {
     --phase1: #4A90B8;
@@ -28,15 +28,15 @@
     --surface: #13151B;
     --surface-raised: #1A1C24;
     /* Responsive dimensions */
-    --label-w: 235px;
+    --label-w: 220px;
     --table-min: 1100px;
     --phase-h: 28px;
     --task-h: 25px;
     --pad-x: 32px;
     --pad-y: 24px;
-    --title-size: 26px;
-    --subtitle-size: 14px;
-    --meta-size: 11.5px;
+    --title-size: 22px;
+    --subtitle-size: 12.5px;
+    --meta-size: 11px;
     --phase-font: 10.5px;
     --task-font: 10px;
     --week-font: 8px;
@@ -48,7 +48,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.4;
@@ -80,7 +80,7 @@
     .task-bar, .phase-row td, .phase-bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     .task-row td { height: 22px; }
     .phase-row td { height: 22px; }
-    :root { --label-w: 210px; --table-min: 100%; }
+    :root { --label-w: 200px; --table-min: 100%; }
     .col-label { width: var(--label-w); min-width: var(--label-w); }
     .footer { font-size: 7pt; }
   }
@@ -96,7 +96,7 @@
 
   /* ── Header ── */
   .header {
-    padding: 0 0 20px 0;
+    padding: 0 0 18px 0;
     border-bottom: 1px solid var(--grid-month);
     margin-bottom: 6px;
     position: relative;
@@ -114,18 +114,18 @@
   }
 
   .header h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
     font-size: var(--title-size);
-    line-height: 1.15;
+    line-height: 1.2;
     color: var(--text);
     max-width: 80%;
     letter-spacing: -0.3px;
   }
 
   .header .subtitle {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
     font-size: var(--subtitle-size);
     color: var(--text-muted);
     margin-top: 4px;
@@ -138,9 +138,10 @@
     font-size: var(--meta-size);
     color: var(--text-muted);
     flex-wrap: wrap;
+    font-weight: 400;
   }
 
-  .meta-line strong { font-weight: 600; color: var(--text); }
+  .meta-line strong { font-weight: 500; color: var(--text); }
 
   .header .approach-tag {
     position: absolute;
@@ -209,7 +210,7 @@
   }
 
   .status-box .status-section strong {
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text);
     display: block;
     font-family: 'JetBrains Mono', monospace;
@@ -251,8 +252,9 @@
   }
 
   .equation-aside .eq-math {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 19px;
+    font-family: 'Inter', sans-serif;
+    font-size: 17px;
+    font-weight: 300;
     font-style: italic;
     color: var(--text);
   }
@@ -262,6 +264,7 @@
     color: var(--text-muted);
     margin-top: 3px;
     line-height: 1.45;
+    font-weight: 400;
   }
 
   /* ── Gantt Chart ── */
@@ -347,7 +350,7 @@
     align-items: center;
     gap: 8px;
     padding: 4px 10px 4px 14px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: var(--phase-font);
     letter-spacing: 0.2px;
     color: white;
@@ -356,9 +359,9 @@
   }
 
   .phase-group-label .phase-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 14px;
-    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
     opacity: 0.7;
     min-width: 12px;
   }
@@ -386,6 +389,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     background: var(--surface);
+    font-weight: 400;
   }
 
   .task-label .task-dot {
@@ -558,17 +562,16 @@
     font-size: 9.5px;
     color: var(--text-muted);
   }
-  /* ── Responsive Breakpoints ── */
 
-  /* Large wide screens (>1800px) — more breathing room */
+  /* ── Responsive Breakpoints ── */
   @media (min-width: 1800px) {
     :root {
-      --label-w: 280px;
+      --label-w: 260px;
       --phase-h: 32px;
       --task-h: 28px;
       --bar-h: 18px;
       --bar-top: 5px;
-      --title-size: 30px;
+      --title-size: 26px;
       --phase-font: 12px;
       --task-font: 11px;
       --week-font: 9px;
@@ -576,20 +579,18 @@
     }
   }
 
-  /* Medium screens (1200–1440px) */
   @media (max-width: 1440px) {
     :root {
-      --label-w: 210px;
+      --label-w: 200px;
       --table-min: 1000px;
       --pad-x: 24px;
       --pad-y: 20px;
-      --title-size: 22px;
-      --subtitle-size: 12px;
+      --title-size: 20px;
+      --subtitle-size: 11.5px;
       --meta-size: 10.5px;
     }
   }
 
-  /* Smaller screens (<1024px) — compact layout, scroll expected */
   @media (max-width: 1024px) {
     :root {
       --label-w: 170px;
@@ -600,8 +601,8 @@
       --bar-top: 5px;
       --pad-x: 16px;
       --pad-y: 16px;
-      --title-size: 19px;
-      --subtitle-size: 11px;
+      --title-size: 18px;
+      --subtitle-size: 10.5px;
       --meta-size: 10px;
       --phase-font: 9px;
       --task-font: 8.5px;
@@ -611,28 +612,21 @@
 
     .header .approach-tag { display: none; }
     .header::before { font-size: 7.5px; letter-spacing: 1.5px; }
-
     .phase-group-label { gap: 5px; padding: 3px 6px 3px 10px; }
-    .phase-group-label .phase-num { font-size: 11px; }
-
+    .phase-group-label .phase-num { font-size: 10px; }
     .task-label { padding: 0 4px 0 14px; }
     .task-label .panelist-tag { font-size: 6px; }
-
     .week-header-row td:first-child { padding-left: 8px; font-size: 6.5px; }
-
     .milestone-label { font-size: 7px; }
     .milestone-marker { width: 8px; height: 8px; }
     .milestone-row td { height: 22px; }
-
     .status-box { gap: 16px; font-size: 10px; padding: 8px 12px; }
-    .equation-aside .eq-math { font-size: 16px; }
+    .equation-aside .eq-math { font-size: 15px; }
     .equation-aside .eq-desc { font-size: 9px; }
-
     .legend-item span { font-size: 8.5px; }
     .footer { font-size: 8.5px; }
   }
 
-  /* Tablet/narrow (<768px) — stack header, minimal labels */
   @media (max-width: 768px) {
     :root {
       --label-w: 140px;
@@ -643,7 +637,7 @@
       --bar-top: 5px;
       --pad-x: 12px;
       --pad-y: 12px;
-      --title-size: 16px;
+      --title-size: 15px;
       --subtitle-size: 10px;
       --meta-size: 9px;
       --phase-font: 8px;
@@ -654,21 +648,17 @@
 
     .header .subtitle { display: none; }
     .meta-line { gap: 8px 16px; }
-
     .filter-bar { gap: 4px; }
     .filter-btn { font-size: 8.5px; padding: 4px 8px; }
     .phase-pill { width: 22px; font-size: 8px; }
     .filter-sep { height: 14px; }
-
     .phase-group-label { padding: 2px 4px 2px 8px; gap: 4px; }
     .phase-group-label .phase-num { font-size: 10px; min-width: 10px; }
     .task-label { padding: 0 3px 0 10px; }
     .task-label .task-dot { width: 3px; height: 3px; margin-right: 4px; }
-
     .legend { gap: 4px 10px; }
     .legend-item span { font-size: 7.5px; }
     .legend-swatch { width: 9px; height: 5px; }
-
     .footer { flex-direction: column; gap: 2px; font-size: 8px; }
   }
 
@@ -682,7 +672,7 @@
   }
 
   .filter-btn {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 10px;
     font-weight: 500;
     padding: 5px 12px;
@@ -842,7 +832,7 @@
   .progress-pct {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--done);
     min-width: 32px;
   }
@@ -933,11 +923,11 @@
   <div class="header">
     <div class="approach-tag">Development Timeline</div>
     <h1>Agent-Based Simulation of Digital Payment Adoption Among UPLB Students</h1>
-    <div class="subtitle">Project Gantt Chart &mdash; Rogers' Diffusion (Bass ODE) &rarr; ABM Equivalent &rarr; Validation &rarr; Experiments</div>
+    <div class="subtitle">Bass ODE &rarr; ABM Equivalent &rarr; Validation &rarr; Experiments</div>
     <div class="meta-line">
       <span><strong>Researcher:</strong> Jorge G. Bocobo</span>
       <span><strong>Adviser:</strong> Zenith O. Arnejo</span>
-      <span><strong>Period:</strong> February 2 &ndash; May 22, 2026</span>
+      <span><strong>Period:</strong> Feb 2 &ndash; May 22, 2026</span>
       <span><strong>Platform:</strong> GAMA / Python</span>
     </div>
   </div>
@@ -973,11 +963,11 @@
         </div>
       </div>
       <div class="equation-aside">
-        <div class="eq-label">Core Equation &mdash; Bass Diffusion Model (Rogers' RDI Formalization)</div>
+        <div class="eq-label">Core Equation &mdash; Bass Diffusion Model</div>
         <div class="eq-math">dN(t)/dt = [ p + q &middot; N(t)/M ] &middot; [ M &minus; N(t) ]</div>
         <div class="eq-desc">
-          <em>p</em> = innovation coefficient (external/advertising &rarr; maps to Ad Agent) &nbsp;|&nbsp;
-          <em>q</em> = imitation coefficient (peer WOM &rarr; maps to Student Agent interactions) &nbsp;|&nbsp;
+          <em>p</em> = innovation coefficient &nbsp;|&nbsp;
+          <em>q</em> = imitation coefficient &nbsp;|&nbsp;
           <em>M</em> = market potential &nbsp;|&nbsp;
           <em>N(t)</em> = cumulative adopters
         </div>
@@ -1004,7 +994,7 @@
   <div class="progress-summary">
     <span class="progress-pct">0%</span>
     <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:0%"></div></div>
-    <span class="progress-count">0 of 35 tasks</span>
+    <span class="progress-count">0 of 18 tasks</span>
     <span class="last-updated"></span>
     <button class="export-btn" onclick="exportProgress()">Copy JSON</button>
   </div>
@@ -1029,7 +1019,7 @@
         <td colspan="3">May</td>
       </tr>
 
-      <!-- Week Headers: Feb 2 - May 22 = 16 weeks -->
+      <!-- Week Headers -->
       <tr class="week-header-row">
         <td>Tasks / Weeks &rarr;</td>
         <td>W1<br><span class="week-date">Feb 2</span></td>
@@ -1050,7 +1040,7 @@
         <td>W16<br><span class="week-date">May 18</span></td>
       </tr>
 
-      <!-- ════════ PHASE 1: Math Foundation + Model Differentiation ════════ -->
+      <!-- ════════ PHASE 1: Math Foundation ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase1)">
           <div class="phase-group-label"><span class="phase-num">1</span> Math Foundation &amp; Lit Review</div>
@@ -1061,21 +1051,14 @@
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase1)"></div><span class="task-name">Study Bass diffusion ODE &amp; existing ABM equivalents</span></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase1)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase1)"></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Lit review &amp; model comparison</span><span class="panelist-tag">C1</span></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--milestone);opacity:0.6"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:80%;background:var(--milestone);opacity:0.6"></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Write ABM vs SIR/SEIR comparison section</span><span class="panelist-tag">C1</span></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:20%;width:80%;background:var(--milestone);opacity:0.6"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:90%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase1)"></div><span class="task-name">Document Bass params &amp; map to adoption context</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase1)"></div><span class="task-name">Bass parameter mapping</span></div></td>
         <td></td>
         <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase1)"></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td>
@@ -1084,10 +1067,10 @@
 
       <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
-      <!-- ════════ PHASE 2: Equation-Based Model + Survey + Ch3 ════════ -->
+      <!-- ════════ PHASE 2: Bass ODE & Data ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase2)">
-          <div class="phase-group-label"><span class="phase-num">2</span> Bass ODE Model &amp; Data Collection</div>
+          <div class="phase-group-label"><span class="phase-num">2</span> Bass ODE &amp; Data Collection</div>
         </td>
         <td></td><td></td>
         <td><div class="phase-bar" style="background:var(--phase2)"></div></td>
@@ -1097,7 +1080,7 @@
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Implement Bass ODE in Python (scipy)</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Bass ODE implementation</span></div></td>
         <td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase2)"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2)"></div></td>
@@ -1105,33 +1088,17 @@
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Calibrate &amp; generate baseline S-curves</span></div></td>
-        <td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase2)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase2)"></div></td>
-        <td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Define comparison metrics (RMSE, peak, penetration)</span></div></td>
-        <td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase2)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2)"></div></td>
-        <td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Deploy survey &amp; collect responses (200-300)</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Survey deployment &amp; collection</span></div></td>
         <td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px);opacity:0.5"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px);opacity:0.5"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px);opacity:0.5"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px);opacity:0.5"></div></td>
         <td></td><td></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Write Chapter 3: Materials &amp; Methods (ARDI)</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Chapter 3: Methods</span></div></td>
         <td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase2)"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2)"></div></td>
@@ -1145,7 +1112,7 @@
       <!-- ════════ PHASE 3: ABM Design ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase3)">
-          <div class="phase-group-label"><span class="phase-num">3</span> ABM Model Design</div>
+          <div class="phase-group-label"><span class="phase-num">3</span> ABM Design</div>
         </td>
         <td></td><td></td><td></td><td></td>
         <td><div class="phase-bar" style="background:var(--phase3)"></div></td>
@@ -1154,40 +1121,18 @@
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Map Bass p&rarr;ad exposure, q&rarr;peer thresholds</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Agent states &amp; BDI design</span></div></td>
         <td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase3)"></div></td>
-        <td></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase3)"></div></td>
         <td></td><td></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Design states: Unaware&rarr;Aware&rarr;Trial&rarr;Regular&rarr;Advocate</span></div></td>
-        <td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase3)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase3)"></div></td>
-        <td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Design multi-layer org network topology</span><span class="panelist-tag">C3</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Network topology design</span><span class="panelist-tag">C3</span></div></td>
         <td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--milestone);opacity:0.6"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:70%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Integrate 5 personas &amp; survey-derived BDI params</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase3)"></div></td>
-        <td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Finalize GAMA model architecture (P-ARDI)</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase3)"></div></td>
         <td></td><td></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
@@ -1197,7 +1142,7 @@
       <!-- ════════ PHASE 4: ABM Implementation ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase4)">
-          <div class="phase-group-label"><span class="phase-num">4</span> ABM Implementation (GAMA)</div>
+          <div class="phase-group-label"><span class="phase-num">4</span> ABM Implementation</div>
         </td>
         <td></td><td></td><td></td><td></td><td></td><td></td>
         <td><div class="phase-bar" style="background:var(--phase4)"></div></td>
@@ -1206,37 +1151,15 @@
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">Implement BDI agent behaviors &amp; decision rules</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">GAMA model coding</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase4)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:95%;background:var(--phase4)"></div></td>
-        <td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Implement multi-layer network (org/friend/class)</span><span class="panelist-tag">C3</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--milestone);opacity:0.6"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">WOM + peer influence + advertising mechanisms</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase4)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase4)"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase4)"></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">15-week semester timeline &amp; event triggers</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase4)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase4)"></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">Testing, debugging &amp; parameter tuning</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">Testing &amp; parameter tuning</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase4)"></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
@@ -1247,7 +1170,7 @@
       <!-- ════════ PHASE 5: Validation ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase5)">
-          <div class="phase-group-label"><span class="phase-num">5</span> Validation (Model-to-Model)</div>
+          <div class="phase-group-label"><span class="phase-num">5</span> Validation</div>
         </td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td><div class="phase-bar" style="background:var(--phase5)"></div></td>
@@ -1255,29 +1178,16 @@
         <td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Run ABM with Bass-equivalent parameters</span><span class="panelist-tag">C2</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Model-to-model comparison</span><span class="panelist-tag">C2</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--milestone);opacity:0.6"></div></td>
         <td></td><td></td><td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Compare S-curves: ABM vs Bass ODE output</span><span class="panelist-tag">C2</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--milestone);opacity:0.6"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Quantitative metrics (RMSE, peak timing, %)</span><span class="panelist-tag">C2</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase5)"></div><span class="task-name">Validation write-up</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--milestone);opacity:0.6"></div></td>
-        <td></td><td></td><td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase5)"></div><span class="task-name">Document validation results &amp; deviations</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase5)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:20%;width:80%;background:var(--phase5)"></div></td>
         <td></td><td></td><td></td><td></td><td></td>
       </tr>
 
@@ -1294,36 +1204,16 @@
         <td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 1: Network structure (random/small-world/scale-free)</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Run scenario experiments</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase6)"></div></td>
-        <td></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase6)"></div></td>
         <td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 2: Opinion leader &amp; early adopter targeting</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase6)"></div></td>
-        <td></td>
-        <td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 3: Campus event &amp; advertising intensity</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:40%;width:60%;background:var(--phase6)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase6)"></div></td>
-        <td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 4: Trust threshold sensitivity analysis</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Results analysis</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase6)"></div></td>
-        <td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Collect &amp; analyze all experiment results</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase6)"></div></td>
         <td></td><td></td><td></td>
       </tr>
 
@@ -1332,7 +1222,7 @@
       <!-- ════════ PHASE 7: Thesis Writing ════════ -->
       <tr class="phase-row">
         <td style="background:var(--phase7)">
-          <div class="phase-group-label"><span class="phase-num">7</span> Thesis Writing (Ch 4–6)</div>
+          <div class="phase-group-label"><span class="phase-num">7</span> Thesis Writing</div>
         </td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td><div class="phase-bar" style="background:var(--phase7)"></div></td>
@@ -1342,31 +1232,17 @@
         <td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 4: Results &amp; Analysis (validation + experiments)</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Write Chapters 4&ndash;6</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase7)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:95%;background:var(--phase7)"></div></td>
-        <td></td>
-        <td></td><td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 5: Discussion</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase7)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase7)"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:80%;background:var(--phase7)"></div></td>
         <td></td><td></td><td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 6: Conclusion &amp; Future Work</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Revise Chapters 1&ndash;3</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase7)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase7)"></div></td>
-        <td></td><td></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Revise Chapters 1–3 based on final model</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:20%;width:80%;background:var(--phase7)"></div></td>
         <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase7)"></div></td>
         <td></td><td></td>
       </tr>
@@ -1383,26 +1259,15 @@
         <td><div class="phase-bar" style="background:var(--phase8)"></div></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Complete thesis draft review with adviser</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Final manuscript submission</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
         <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase8)"></div></td>
         <td></td>
       </tr>
       <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Prepare &amp; practice defense presentation</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase8)"></div></td>
-        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase8)"></div></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Submit final manuscript</span></div></td>
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Thesis defense</span></div></td>
         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:5%;width:35%;background:var(--phase8)"></div></td>
-      </tr>
-      <tr class="task-row">
-        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Thesis defense</span></div></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-        <td style="position:relative"><div class="task-bar" style="left:40%;width:40%;background:var(--milestone)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:20%;width:60%;background:var(--milestone)"></div></td>
       </tr>
 
       <!-- ════════ MILESTONES ════════ -->
@@ -1410,47 +1275,39 @@
       <tr class="milestone-row">
         <td><div class="milestone-row-label">&#9670; Key Milestones</div></td>
         <td></td>
-        <!-- W2: end of Phase 1 -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:85%"></div>
           <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Lit Done</div>
         </td>
         <td></td>
-        <!-- W4: Bass ODE -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:85%"></div>
           <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Bass ODE</div>
         </td>
         <td></td>
-        <!-- W6: ABM Design -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:85%"></div>
           <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">ABM Design</div>
         </td>
         <td></td><td></td>
-        <!-- W9-10: ABM v1 -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:70%"></div>
           <div class="milestone-label" style="left:70%;top:auto;bottom:-2px">ABM v1.0</div>
         </td>
-        <!-- W11: Validation -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:90%"></div>
           <div class="milestone-label" style="left:90%;top:auto;bottom:-2px">Validated</div>
         </td>
         <td></td>
-        <!-- W13: Experiments done -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:90%"></div>
           <div class="milestone-label" style="left:90%;top:auto;bottom:-2px">Exp Done</div>
         </td>
-        <!-- W14: Draft -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:85%"></div>
           <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Draft</div>
         </td>
         <td></td>
-        <!-- W16: Defense -->
         <td style="position:relative">
           <div class="milestone-marker" style="left:65%"></div>
           <div class="milestone-label" style="left:65%;top:auto;bottom:-2px">Defense</div>
@@ -1463,15 +1320,15 @@
   <div class="legend">
     <span class="legend-title">Legend</span>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase1)"></div><span>Math Foundation</span></div>
-    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase2)"></div><span>ODE Model + Data</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase2)"></div><span>ODE + Data</span></div>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase3)"></div><span>ABM Design</span></div>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase4)"></div><span>Implementation</span></div>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase5)"></div><span>Validation</span></div>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase6)"></div><span>Experiments</span></div>
-    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase7)"></div><span>Thesis Writing</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase7)"></div><span>Writing</span></div>
     <div class="legend-item"><div class="legend-swatch" style="background:var(--phase8)"></div><span>Submission</span></div>
     <div class="legend-item"><div class="legend-diamond"></div><span>Milestone</span></div>
-    <div class="legend-item"><span class="legend-panelist-tag">C1</span><span>Panelist comment task</span></div>
+    <div class="legend-item"><span class="legend-panelist-tag">C1</span><span>Panelist comment</span></div>
   </div>
 
   <!-- Footer -->
@@ -1485,7 +1342,7 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const TIMELINE_START = new Date(2026, 1, 2); // Feb 2, 2026
+  const TIMELINE_START = new Date(2026, 1, 2);
   const TOTAL_WEEKS = 16;
 
   // ── Walk table: assign phases, task IDs, inject checkboxes ──
@@ -1511,7 +1368,6 @@ document.addEventListener('DOMContentLoaded', () => {
         taskCounters[currentPhase]++;
         const taskId = currentPhase + '.' + taskCounters[currentPhase];
         row.dataset.taskId = taskId;
-        // Inject checkbox
         const label = row.querySelector('.task-label');
         if (label) {
           const cb = document.createElement('input');
@@ -1519,7 +1375,6 @@ document.addEventListener('DOMContentLoaded', () => {
           cb.className = 'task-check';
           cb.dataset.taskId = taskId;
           label.insertBefore(cb, label.firstChild);
-          // Tooltip for truncated names
           const name = label.querySelector('.task-name');
           if (name) label.title = name.textContent;
         }
@@ -1532,7 +1387,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Progress Data ──
   let progressData = { lastUpdated: null, tasks: {} };
 
-  // Try localStorage first (for unsaved local changes), then fetch progress.json
   const cached = localStorage.getItem('sp-progress');
   if (cached) {
     try { progressData = JSON.parse(cached); } catch(e) {}
@@ -1541,7 +1395,6 @@ document.addEventListener('DOMContentLoaded', () => {
   fetch('progress.json')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(data => {
-      // Use progress.json as source of truth if it's newer or no local cache
       if (!cached || (data.lastUpdated && data.lastUpdated >= (progressData.lastUpdated || ''))) {
         progressData = data;
         localStorage.setItem('sp-progress', JSON.stringify(data));
@@ -1627,7 +1480,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const weekIdx = Math.floor(days / 7);
     const frac = (days % 7) / 7;
     const cells = document.querySelectorAll('.week-header-row td');
-    const cell = cells[weekIdx + 1]; // +1 for label column
+    const cell = cells[weekIdx + 1];
     if (!cell) return;
     const scroll = document.querySelector('.gantt-scroll');
     const table = document.querySelector('.gantt-table');
@@ -1667,7 +1520,6 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.clipboard.writeText(json).then(() => {
       showToast('Copied to clipboard! Paste into progress.json and push.');
     }).catch(() => {
-      // Fallback for older browsers
       const ta = document.createElement('textarea');
       ta.value = json;
       ta.style.position = 'fixed';
@@ -1689,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Collapse / Expand / Filter (existing behavior) ──
+  // ── Collapse / Expand / Filter ──
   collapseAll();
 
   document.querySelectorAll('.phase-row').forEach(row => {
