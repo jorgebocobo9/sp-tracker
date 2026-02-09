@@ -1,11 +1,11 @@
 {
   "lastUpdated": "2026-02-09",
   "tasks": {
-    "1.1": false,
-    "1.2": false,
+    "1.1": true,
+    "1.2": true,
     "2.1": false,
     "2.2": false,
-    "2.3": false,
+    "2.3": true,
     "3.1": false,
     "3.2": false,
     "4.1": false,
