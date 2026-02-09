@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SP Timeline — Agent-Based Simulation of Digital Payment Adoption</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --phase1: #4A90B8;
+    --phase2: #5AA3C9;
+    --phase3: #6AB8CC;
+    --phase4: #4A9E8E;
+    --phase5: #7BAE8F;
+    --phase6: #B09E82;
+    --phase7: #B87E8C;
+    --phase8: #8A7EA0;
+    --milestone: #E06B50;
+    --bg: #0F1117;
+    --text: #E2E4E9;
+    --text-muted: #8B8D95;
+    --grid: #1E2028;
+    --grid-month: #2A2C36;
+    --header-bg: #161820;
+    --today: #E06B50;
+    --done: #7BAE8F;
+    --surface: #13151B;
+    --surface-raised: #1A1C24;
+    /* Responsive dimensions */
+    --label-w: 235px;
+    --table-min: 1100px;
+    --phase-h: 28px;
+    --task-h: 25px;
+    --pad-x: 32px;
+    --pad-y: 24px;
+    --title-size: 26px;
+    --subtitle-size: 14px;
+    --meta-size: 11.5px;
+    --phase-font: 10.5px;
+    --task-font: 10px;
+    --week-font: 8px;
+    --month-font: 9.5px;
+    --bar-h: 15px;
+    --bar-top: 5px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media print {
+    @page { size: A4 landscape; margin: 10mm 8mm; }
+    body { background: white; font-size: 9px; }
+    .container { padding: 0; max-width: none; }
+    .gantt-scroll { overflow: visible; }
+    .gantt-table { min-width: unset; width: 100%; }
+    .no-print { display: none !important; }
+    .header { padding: 0 0 8px 0; border-bottom-width: 1px; }
+    .header h1 { font-size: 14pt; }
+    .header .subtitle { font-size: 8pt; }
+    .meta-line { font-size: 7pt; }
+    .phase-group-label { font-size: 6.5pt; }
+    .task-label { font-size: 5.5pt; }
+    .task-label .task-name { font-size: 6pt; }
+    .week-header-row td { font-size: 5.5pt; padding: 3px 1px; }
+    .month-header-row td { font-size: 6.5pt; padding: 4px 0; }
+    .legend { padding: 6px 0 0 0; }
+    .legend-title { font-size: 6.5pt; }
+    .legend-item span { font-size: 6pt; }
+    .milestone-label { font-size: 5pt; }
+    .equation-aside { display: none; }
+    .status-box { font-size: 6pt; padding: 6px 10px; margin: 6px 0 10px 0; }
+    .task-bar, .phase-row td, .phase-bar { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .task-row td { height: 22px; }
+    .phase-row td { height: 22px; }
+    :root { --label-w: 210px; --table-min: 100%; }
+    .col-label { width: var(--label-w); min-width: var(--label-w); }
+    .footer { font-size: 7pt; }
+  }
+
+  html, body { height: 100%; }
+
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: var(--pad-y) var(--pad-x);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 0 0 20px 0;
+    border-bottom: 1px solid var(--grid-month);
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .header::before {
+    content: 'CMSC 190 · Special Problem · Second Semester AY 2025–2026';
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: var(--title-size);
+    line-height: 1.15;
+    color: var(--text);
+    max-width: 80%;
+    letter-spacing: -0.3px;
+  }
+
+  .header .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: var(--subtitle-size);
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .meta-line {
+    display: flex;
+    gap: 16px 28px;
+    margin-top: 8px;
+    font-size: var(--meta-size);
+    color: var(--text-muted);
+    flex-wrap: wrap;
+  }
+
+  .meta-line strong { font-weight: 600; color: var(--text); }
+
+  .header .approach-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--surface-raised);
+    color: var(--text-muted);
+    border: 1px solid var(--grid-month);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    text-transform: uppercase;
+    border-radius: 3px;
+  }
+
+  /* ── Context Panel (collapsible) ── */
+  .context-panel {
+    margin: 8px 0 4px 0;
+  }
+
+  .context-toggle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+
+  .context-toggle::-webkit-details-marker { display: none; }
+
+  .context-toggle::before {
+    content: '\25B8';
+    font-size: 10px;
+    transition: transform 0.15s ease;
+    display: inline-block;
+  }
+
+  .context-panel[open] > .context-toggle::before {
+    transform: rotate(90deg);
+  }
+
+  .context-toggle:hover { color: var(--text); }
+
+  .context-body { padding: 4px 0 0 0; }
+
+  /* ── Status Box ── */
+  .status-box {
+    background: var(--surface-raised);
+    border-left: 3px solid var(--done);
+    padding: 10px 16px;
+    margin: 0 0 10px 0;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-radius: 4px;
+  }
+
+  .status-box .status-section strong {
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .status-box .status-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .status-box .status-section li::before {
+    content: '✓ ';
+    color: var(--done);
+    font-weight: 700;
+  }
+
+  /* ── Equation aside ── */
+  .equation-aside {
+    background: var(--surface-raised);
+    border-left: 3px solid var(--phase2);
+    padding: 10px 16px;
+    margin: 0;
+    max-width: 720px;
+    border-radius: 4px;
+  }
+
+  .equation-aside .eq-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .equation-aside .eq-math {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .equation-aside .eq-desc {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    line-height: 1.45;
+  }
+
+  /* ── Gantt Chart ── */
+  .gantt-scroll {
+    overflow-x: auto;
+    margin: 0;
+    border: 1px solid var(--grid-month);
+    background: var(--surface);
+    border-radius: 6px;
+  }
+
+  .gantt-table {
+    width: 100%;
+    min-width: var(--table-min);
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .col-label { width: var(--label-w); min-width: var(--label-w); }
+  .col-week { width: calc((100% - var(--label-w)) / 16); }
+
+  /* ── Month & Week Headers ── */
+  .month-header-row td {
+    background: #1C1E28;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--month-font);
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 5px 0;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .month-header-row td:first-child {
+    background: #1C1E28;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .week-header-row td {
+    background: var(--header-bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--week-font);
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px 1px;
+    border-right: 1px solid var(--grid);
+    border-bottom: 2px solid var(--grid-month);
+    white-space: nowrap;
+  }
+
+  .week-date {
+    font-size: calc(var(--week-font) - 0.5px);
+    opacity: 0.75;
+  }
+
+  .week-header-row td:first-child {
+    text-align: left;
+    padding-left: 14px;
+    font-size: 7.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+    border-right: 2px solid var(--grid-month);
+  }
+
+  /* ── Phase Group Row ── */
+  .phase-row td {
+    padding: 0;
+    height: var(--phase-h);
+    border-right: 1px solid var(--grid);
+    border-bottom: none;
+    position: relative;
+  }
+
+  .phase-row:hover td { background: rgba(255,255,255,0.02); }
+  .phase-row td:first-child { border-right: 2px solid var(--grid-month); }
+
+  .phase-group-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px 4px 14px;
+    font-weight: 600;
+    font-size: var(--phase-font);
+    letter-spacing: 0.2px;
+    color: white;
+    height: 100%;
+    white-space: nowrap;
+  }
+
+  .phase-group-label .phase-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0.7;
+    min-width: 12px;
+  }
+
+  /* ── Task Rows ── */
+  .task-row td {
+    padding: 0;
+    height: var(--task-h);
+    border-right: 1px solid var(--grid);
+    border-bottom: 1px solid var(--grid);
+    position: relative;
+  }
+
+  .task-row td:first-child { border-right: 2px solid var(--grid-month); }
+  .task-row:last-child td { border-bottom: none; }
+
+  .task-label {
+    display: flex;
+    align-items: center;
+    padding: 0 8px 0 24px;
+    height: 100%;
+    font-size: var(--task-font);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: var(--surface);
+  }
+
+  .task-label .task-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    margin-right: 7px;
+    flex-shrink: 0;
+  }
+
+  .task-label .task-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .task-label .panelist-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    background: rgba(224,107,80,0.15);
+    color: var(--milestone);
+    padding: 1px 4px;
+    border-radius: 2px;
+    margin-left: 4px;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Task Bars ── */
+  .task-bar {
+    position: absolute;
+    top: var(--bar-top);
+    height: var(--bar-h);
+    border-radius: 3px;
+    opacity: 0.85;
+  }
+
+  .task-bar:hover { opacity: 1; }
+
+  .phase-bar {
+    position: absolute;
+    top: 4px; left: 2px; right: 2px; bottom: 4px;
+    opacity: 0.4;
+    border-radius: 3px;
+  }
+
+  /* ── Milestone ── */
+  .milestone-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: var(--milestone);
+    border: 1.5px solid var(--surface);
+    box-shadow: 0 0 8px rgba(224,107,80,0.5);
+    z-index: 5;
+  }
+
+  .milestone-label {
+    position: absolute;
+    top: -2px;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: #F0A090;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 5;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  }
+
+  .milestone-row td {
+    height: 28px;
+    border-right: 1px solid var(--grid);
+    border-bottom: 2px solid var(--grid-month);
+    position: relative;
+    background: rgba(224, 107, 80, 0.03);
+  }
+
+  .milestone-row td:first-child {
+    border-right: 2px solid var(--grid-month);
+    background: var(--surface);
+  }
+
+  .milestone-row-label {
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 14px;
+    height: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--milestone);
+    font-weight: 500;
+  }
+
+  td.month-boundary { border-left: 1.5px solid var(--grid-month); }
+
+  /* ── Separator ── */
+  .sep-row td {
+    height: 2px;
+    border: none;
+    border-right: 1px solid var(--grid);
+    background: var(--grid-month);
+  }
+  .sep-row td:first-child { border-right: 2px solid var(--grid-month); }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 16px;
+    padding: 12px 0 0 0;
+    border-top: 1px solid var(--grid-month);
+    margin-top: 3px;
+    align-items: center;
+  }
+
+  .legend-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7.5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-right: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 7px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  .legend-diamond {
+    width: 7px;
+    height: 7px;
+    background: var(--milestone);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  .legend-panelist-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    background: rgba(224,107,80,0.15);
+    color: var(--milestone);
+    padding: 1px 5px;
+    border-radius: 2px;
+    letter-spacing: 0.3px;
+  }
+
+  .legend-item span { font-size: 9.5px; color: var(--text-muted); }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--grid-month);
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    color: var(--text-muted);
+  }
+  /* ── Responsive Breakpoints ── */
+
+  /* Large wide screens (>1800px) — more breathing room */
+  @media (min-width: 1800px) {
+    :root {
+      --label-w: 280px;
+      --phase-h: 32px;
+      --task-h: 28px;
+      --bar-h: 18px;
+      --bar-top: 5px;
+      --title-size: 30px;
+      --phase-font: 12px;
+      --task-font: 11px;
+      --week-font: 9px;
+      --month-font: 10.5px;
+    }
+  }
+
+  /* Medium screens (1200–1440px) */
+  @media (max-width: 1440px) {
+    :root {
+      --label-w: 210px;
+      --table-min: 1000px;
+      --pad-x: 24px;
+      --pad-y: 20px;
+      --title-size: 22px;
+      --subtitle-size: 12px;
+      --meta-size: 10.5px;
+    }
+  }
+
+  /* Smaller screens (<1024px) — compact layout, scroll expected */
+  @media (max-width: 1024px) {
+    :root {
+      --label-w: 170px;
+      --table-min: 900px;
+      --phase-h: 24px;
+      --task-h: 22px;
+      --bar-h: 13px;
+      --bar-top: 5px;
+      --pad-x: 16px;
+      --pad-y: 16px;
+      --title-size: 19px;
+      --subtitle-size: 11px;
+      --meta-size: 10px;
+      --phase-font: 9px;
+      --task-font: 8.5px;
+      --week-font: 7px;
+      --month-font: 8px;
+    }
+
+    .header .approach-tag { display: none; }
+    .header::before { font-size: 7.5px; letter-spacing: 1.5px; }
+
+    .phase-group-label { gap: 5px; padding: 3px 6px 3px 10px; }
+    .phase-group-label .phase-num { font-size: 11px; }
+
+    .task-label { padding: 0 4px 0 14px; }
+    .task-label .panelist-tag { font-size: 6px; }
+
+    .week-header-row td:first-child { padding-left: 8px; font-size: 6.5px; }
+
+    .milestone-label { font-size: 7px; }
+    .milestone-marker { width: 8px; height: 8px; }
+    .milestone-row td { height: 22px; }
+
+    .status-box { gap: 16px; font-size: 10px; padding: 8px 12px; }
+    .equation-aside .eq-math { font-size: 16px; }
+    .equation-aside .eq-desc { font-size: 9px; }
+
+    .legend-item span { font-size: 8.5px; }
+    .footer { font-size: 8.5px; }
+  }
+
+  /* Tablet/narrow (<768px) — stack header, minimal labels */
+  @media (max-width: 768px) {
+    :root {
+      --label-w: 140px;
+      --table-min: 760px;
+      --phase-h: 22px;
+      --task-h: 20px;
+      --bar-h: 11px;
+      --bar-top: 5px;
+      --pad-x: 12px;
+      --pad-y: 12px;
+      --title-size: 16px;
+      --subtitle-size: 10px;
+      --meta-size: 9px;
+      --phase-font: 8px;
+      --task-font: 7.5px;
+      --week-font: 6.5px;
+      --month-font: 7px;
+    }
+
+    .header .subtitle { display: none; }
+    .meta-line { gap: 8px 16px; }
+
+    .filter-bar { gap: 4px; }
+    .filter-btn { font-size: 8.5px; padding: 4px 8px; }
+    .phase-pill { width: 22px; font-size: 8px; }
+    .filter-sep { height: 14px; }
+
+    .phase-group-label { padding: 2px 4px 2px 8px; gap: 4px; }
+    .phase-group-label .phase-num { font-size: 10px; min-width: 10px; }
+    .task-label { padding: 0 3px 0 10px; }
+    .task-label .task-dot { width: 3px; height: 3px; margin-right: 4px; }
+
+    .legend { gap: 4px 10px; }
+    .legend-item span { font-size: 7.5px; }
+    .legend-swatch { width: 9px; height: 5px; }
+
+    .footer { flex-direction: column; gap: 2px; font-size: 8px; }
+  }
+
+  /* ── Filter Bar ── */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 0;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border: 1px solid var(--grid-month);
+    border-radius: 4px;
+    background: var(--surface-raised);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover { border-color: var(--text-muted); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  .filter-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--grid-month);
+    margin: 0 4px;
+  }
+
+  .phase-pill {
+    padding: 4px 0;
+    width: 28px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    border-radius: 3px;
+  }
+
+  .phase-pill.active {
+    color: #fff;
+    border-color: transparent;
+  }
+
+  .phase-pill.dimmed {
+    opacity: 0.35;
+    border-color: transparent;
+  }
+
+  /* ── Collapse/Expand ── */
+  .phase-row { cursor: pointer; user-select: none; }
+
+  .phase-group-label .chevron {
+    margin-left: auto;
+    font-size: 10px;
+    opacity: 0.6;
+    transition: transform 0.2s ease;
+    padding-right: 4px;
+  }
+
+  .phase-row.collapsed .chevron { transform: rotate(-90deg); }
+
+  .phase-hidden { display: none !important; }
+  .phase-filtered-out { display: none !important; }
+
+  /* ── Checkboxes ── */
+  .task-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid var(--text-muted);
+    border-radius: 2px;
+    margin-right: 6px;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    transition: all 0.15s ease;
+  }
+
+  .task-check:checked {
+    background: var(--done);
+    border-color: var(--done);
+  }
+
+  .task-check:checked::after {
+    content: '\2713';
+    position: absolute;
+    top: -1.5px;
+    left: 1px;
+    font-size: 9px;
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .task-row.completed .task-bar {
+    opacity: 0.2 !important;
+  }
+
+  .task-row.completed .task-name {
+    text-decoration: line-through;
+    opacity: 0.4;
+  }
+
+  .task-row.completed .task-dot {
+    background: var(--done) !important;
+  }
+
+  /* ── Today Line ── */
+  .today-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    background: var(--today);
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .today-label {
+    position: absolute;
+    top: 2px;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 7px;
+    color: var(--today);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    z-index: 11;
+    background: var(--surface);
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid rgba(224,107,80,0.3);
+  }
+
+  /* ── Progress Summary ── */
+  .progress-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0 8px 0;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .progress-bar-outer {
+    flex: 1;
+    max-width: 260px;
+    height: 5px;
+    background: var(--grid);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: var(--done);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--done);
+    min-width: 32px;
+  }
+
+  .progress-count {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .phase-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    opacity: 0.7;
+    margin-left: auto;
+    padding-right: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .phase-counter.all-done {
+    color: var(--done);
+    opacity: 1;
+  }
+
+  /* ── Export ── */
+  .export-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--surface-raised);
+    color: var(--text-muted);
+    border: 1px solid var(--grid-month);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-left: auto;
+  }
+
+  .export-btn:hover {
+    border-color: var(--done);
+    color: var(--done);
+  }
+
+  .export-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--surface-raised);
+    border: 1px solid var(--done);
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 11px;
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+  }
+
+  .export-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .last-updated {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  @media print {
+    .task-check { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .today-line, .today-label { display: none; }
+    .export-btn { display: none; }
+    .progress-summary { font-size: 8pt; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="approach-tag">Development Timeline</div>
+    <h1>Agent-Based Simulation of Digital Payment Adoption Among UPLB Students</h1>
+    <div class="subtitle">Project Gantt Chart &mdash; Rogers' Diffusion (Bass ODE) &rarr; ABM Equivalent &rarr; Validation &rarr; Experiments</div>
+    <div class="meta-line">
+      <span><strong>Researcher:</strong> Jorge G. Bocobo</span>
+      <span><strong>Adviser:</strong> Zenith O. Arnejo</span>
+      <span><strong>Period:</strong> February 2 &ndash; May 22, 2026</span>
+      <span><strong>Platform:</strong> GAMA / Python</span>
+    </div>
+  </div>
+
+  <!-- Collapsible context panel -->
+  <details class="context-panel">
+    <summary class="context-toggle">Project Context &amp; Status</summary>
+    <div class="context-body">
+      <div class="status-box">
+        <div class="status-section">
+          <strong>Completed (Pre-Feb 2026)</strong>
+          <ul>
+            <li>P-ARDI framework &amp; all ARDI figures</li>
+            <li>Chapters 1 (Intro) &amp; 2 (RRL) drafted</li>
+            <li>50-item survey instrument designed</li>
+          </ul>
+        </div>
+        <div class="status-section">
+          <strong>Completed (Pre-Feb 2026)</strong>
+          <ul>
+            <li>5 persona classification from synthetic data</li>
+            <li>Chismisan simulator prototype (GAMA)</li>
+            <li>Panelist defense (Dec 11, 2025)</li>
+          </ul>
+        </div>
+        <div class="status-section">
+          <strong>Panelist Comments to Address</strong>
+          <ul>
+            <li style="color:var(--milestone)"><span style="color:var(--milestone)">C1: Model differentiation (ABM vs SIR)</span></li>
+            <li style="color:var(--milestone)"><span style="color:var(--milestone)">C2: Validation via model-to-model comparison</span></li>
+            <li style="color:var(--milestone)"><span style="color:var(--milestone)">C3: Multi-layer org network enhancement</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="equation-aside">
+        <div class="eq-label">Core Equation &mdash; Bass Diffusion Model (Rogers' RDI Formalization)</div>
+        <div class="eq-math">dN(t)/dt = [ p + q &middot; N(t)/M ] &middot; [ M &minus; N(t) ]</div>
+        <div class="eq-desc">
+          <em>p</em> = innovation coefficient (external/advertising &rarr; maps to Ad Agent) &nbsp;|&nbsp;
+          <em>q</em> = imitation coefficient (peer WOM &rarr; maps to Student Agent interactions) &nbsp;|&nbsp;
+          <em>M</em> = market potential &nbsp;|&nbsp;
+          <em>N(t)</em> = cumulative adopters
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-action="overview">Overview</button>
+    <button class="filter-btn" data-action="detail">Expand All</button>
+    <span class="filter-sep"></span>
+    <button class="filter-btn phase-pill active" data-filter="1" style="background:var(--phase1);border-color:var(--phase1);color:#fff">1</button>
+    <button class="filter-btn phase-pill active" data-filter="2" style="background:var(--phase2);border-color:var(--phase2);color:#fff">2</button>
+    <button class="filter-btn phase-pill active" data-filter="3" style="background:var(--phase3);border-color:var(--phase3);color:#fff">3</button>
+    <button class="filter-btn phase-pill active" data-filter="4" style="background:var(--phase4);border-color:var(--phase4);color:#fff">4</button>
+    <button class="filter-btn phase-pill active" data-filter="5" style="background:var(--phase5);border-color:var(--phase5);color:#fff">5</button>
+    <button class="filter-btn phase-pill active" data-filter="6" style="background:var(--phase6);border-color:var(--phase6);color:#fff">6</button>
+    <button class="filter-btn phase-pill active" data-filter="7" style="background:var(--phase7);border-color:var(--phase7);color:#fff">7</button>
+    <button class="filter-btn phase-pill active" data-filter="8" style="background:var(--phase8);border-color:var(--phase8);color:#fff">8</button>
+  </div>
+
+  <!-- Progress Summary -->
+  <div class="progress-summary">
+    <span class="progress-pct">0%</span>
+    <div class="progress-bar-outer"><div class="progress-bar-inner" style="width:0%"></div></div>
+    <span class="progress-count">0 of 35 tasks</span>
+    <span class="last-updated"></span>
+    <button class="export-btn" onclick="exportProgress()">Copy JSON</button>
+  </div>
+
+  <!-- Gantt Chart -->
+  <div class="gantt-scroll">
+    <table class="gantt-table">
+      <colgroup>
+        <col class="col-label">
+        <col class="col-week"><col class="col-week"><col class="col-week"><col class="col-week">
+        <col class="col-week"><col class="col-week"><col class="col-week"><col class="col-week">
+        <col class="col-week"><col class="col-week"><col class="col-week"><col class="col-week">
+        <col class="col-week"><col class="col-week"><col class="col-week"><col class="col-week">
+      </colgroup>
+
+      <!-- Month Headers -->
+      <tr class="month-header-row">
+        <td></td>
+        <td colspan="4">February</td>
+        <td colspan="4">March</td>
+        <td colspan="5">April</td>
+        <td colspan="3">May</td>
+      </tr>
+
+      <!-- Week Headers: Feb 2 - May 22 = 16 weeks -->
+      <tr class="week-header-row">
+        <td>Tasks / Weeks &rarr;</td>
+        <td>W1<br><span class="week-date">Feb 2</span></td>
+        <td>W2<br><span class="week-date">Feb 9</span></td>
+        <td>W3<br><span class="week-date">Feb 16</span></td>
+        <td>W4<br><span class="week-date">Feb 23</span></td>
+        <td class="month-boundary">W5<br><span class="week-date">Mar 2</span></td>
+        <td>W6<br><span class="week-date">Mar 9</span></td>
+        <td>W7<br><span class="week-date">Mar 16</span></td>
+        <td>W8<br><span class="week-date">Mar 23</span></td>
+        <td class="month-boundary">W9<br><span class="week-date">Mar 30</span></td>
+        <td>W10<br><span class="week-date">Apr 6</span></td>
+        <td>W11<br><span class="week-date">Apr 13</span></td>
+        <td>W12<br><span class="week-date">Apr 20</span></td>
+        <td>W13<br><span class="week-date">Apr 27</span></td>
+        <td class="month-boundary">W14<br><span class="week-date">May 4</span></td>
+        <td>W15<br><span class="week-date">May 11</span></td>
+        <td>W16<br><span class="week-date">May 18</span></td>
+      </tr>
+
+      <!-- ════════ PHASE 1: Math Foundation + Model Differentiation ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase1)">
+          <div class="phase-group-label"><span class="phase-num">1</span> Math Foundation &amp; Lit Review</div>
+        </td>
+        <td><div class="phase-bar" style="background:var(--phase1)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase1)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase1)"></div><span class="task-name">Study Bass diffusion ODE &amp; existing ABM equivalents</span></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase1)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase1)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Write ABM vs SIR/SEIR comparison section</span><span class="panelist-tag">C1</span></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:20%;width:80%;background:var(--milestone);opacity:0.6"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:90%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase1)"></div><span class="task-name">Document Bass params &amp; map to adoption context</span></div></td>
+        <td></td>
+        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase1)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 2: Equation-Based Model + Survey + Ch3 ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase2)">
+          <div class="phase-group-label"><span class="phase-num">2</span> Bass ODE Model &amp; Data Collection</div>
+        </td>
+        <td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase2)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase2)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase2)"></div></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Implement Bass ODE in Python (scipy)</span></div></td>
+        <td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase2)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2)"></div></td>
+        <td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Calibrate &amp; generate baseline S-curves</span></div></td>
+        <td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase2)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase2)"></div></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Define comparison metrics (RMSE, peak, penetration)</span></div></td>
+        <td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase2)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2)"></div></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Deploy survey &amp; collect responses (200-300)</span></div></td>
+        <td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase2);opacity:0.5;background:repeating-linear-gradient(135deg,var(--phase2),var(--phase2) 4px,transparent 4px,transparent 8px)"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase2)"></div><span class="task-name">Write Chapter 3: Materials &amp; Methods (ARDI)</span></div></td>
+        <td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase2)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:100%;background:var(--phase2)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:70%;background:var(--phase2)"></div></td>
+        <td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 3: ABM Design ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase3)">
+          <div class="phase-group-label"><span class="phase-num">3</span> ABM Model Design</div>
+        </td>
+        <td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase3)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase3)"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Map Bass p&rarr;ad exposure, q&rarr;peer thresholds</span></div></td>
+        <td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase3)"></div></td>
+        <td></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Design states: Unaware&rarr;Aware&rarr;Trial&rarr;Regular&rarr;Advocate</span></div></td>
+        <td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase3)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase3)"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Design multi-layer org network topology</span><span class="panelist-tag">C3</span></div></td>
+        <td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--milestone);opacity:0.6"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:70%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Integrate 5 personas &amp; survey-derived BDI params</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase3)"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase3)"></div><span class="task-name">Finalize GAMA model architecture (P-ARDI)</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase3)"></div></td>
+        <td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 4: ABM Implementation ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase4)">
+          <div class="phase-group-label"><span class="phase-num">4</span> ABM Implementation (GAMA)</div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase4)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase4)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase4)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">Implement BDI agent behaviors &amp; decision rules</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase4)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:95%;background:var(--phase4)"></div></td>
+        <td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Implement multi-layer network (org/friend/class)</span><span class="panelist-tag">C3</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--milestone);opacity:0.6"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">WOM + peer influence + advertising mechanisms</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase4)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase4)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">15-week semester timeline &amp; event triggers</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase4)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase4)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase4)"></div><span class="task-name">Testing, debugging &amp; parameter tuning</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase4)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 5: Validation ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase5)">
+          <div class="phase-group-label"><span class="phase-num">5</span> Validation (Model-to-Model)</div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase5)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase5)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Run ABM with Bass-equivalent parameters</span><span class="panelist-tag">C2</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td>
+        <td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Compare S-curves: ABM vs Bass ODE output</span><span class="panelist-tag">C2</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--milestone);opacity:0.6"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--milestone)"></div><span class="task-name">Quantitative metrics (RMSE, peak timing, %)</span><span class="panelist-tag">C2</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--milestone);opacity:0.6"></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase5)"></div><span class="task-name">Document validation results &amp; deviations</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase5)"></div></td>
+        <td></td><td></td><td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 6: Experiments ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase6)">
+          <div class="phase-group-label"><span class="phase-num">6</span> Scenario Experiments</div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase6)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase6)"></div></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 1: Network structure (random/small-world/scale-free)</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase6)"></div></td>
+        <td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 2: Opinion leader &amp; early adopter targeting</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase6)"></div></td>
+        <td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 3: Campus event &amp; advertising intensity</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:40%;width:60%;background:var(--phase6)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase6)"></div></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Exp 4: Trust threshold sensitivity analysis</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:90%;background:var(--phase6)"></div></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase6)"></div><span class="task-name">Collect &amp; analyze all experiment results</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase6)"></div></td>
+        <td></td><td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 7: Thesis Writing ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase7)">
+          <div class="phase-group-label"><span class="phase-num">7</span> Thesis Writing (Ch 4–6)</div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase7)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase7)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase7)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase7)"></div></td>
+        <td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 4: Results &amp; Analysis (validation + experiments)</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase7)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:95%;background:var(--phase7)"></div></td>
+        <td></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 5: Discussion</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:30%;width:70%;background:var(--phase7)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:80%;background:var(--phase7)"></div></td>
+        <td></td><td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Chapter 6: Conclusion &amp; Future Work</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:10%;width:90%;background:var(--phase7)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:50%;background:var(--phase7)"></div></td>
+        <td></td><td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase7)"></div><span class="task-name">Revise Chapters 1–3 based on final model</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:20%;width:80%;background:var(--phase7)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:60%;background:var(--phase7)"></div></td>
+        <td></td><td></td>
+      </tr>
+
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+      <!-- ════════ PHASE 8: Submission & Defense ════════ -->
+      <tr class="phase-row">
+        <td style="background:var(--phase8)">
+          <div class="phase-group-label"><span class="phase-num">8</span> Submission &amp; Defense</div>
+        </td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td><div class="phase-bar" style="background:var(--phase8)"></div></td>
+        <td><div class="phase-bar" style="background:var(--phase8)"></div></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Complete thesis draft review with adviser</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase8)"></div></td>
+        <td></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Prepare &amp; practice defense presentation</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:95%;background:var(--phase8)"></div></td>
+        <td style="position:relative"><div class="task-bar" style="left:0;width:40%;background:var(--phase8)"></div></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Submit final manuscript</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:5%;width:35%;background:var(--phase8)"></div></td>
+      </tr>
+      <tr class="task-row">
+        <td><div class="task-label"><div class="task-dot" style="background:var(--phase8)"></div><span class="task-name">Thesis defense</span></div></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td style="position:relative"><div class="task-bar" style="left:40%;width:40%;background:var(--milestone)"></div></td>
+      </tr>
+
+      <!-- ════════ MILESTONES ════════ -->
+      <tr class="sep-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr class="milestone-row">
+        <td><div class="milestone-row-label">&#9670; Key Milestones</div></td>
+        <td></td>
+        <!-- W2: end of Phase 1 -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:85%"></div>
+          <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Lit Done</div>
+        </td>
+        <td></td>
+        <!-- W4: Bass ODE -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:85%"></div>
+          <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Bass ODE</div>
+        </td>
+        <td></td>
+        <!-- W6: ABM Design -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:85%"></div>
+          <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">ABM Design</div>
+        </td>
+        <td></td><td></td>
+        <!-- W9-10: ABM v1 -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:70%"></div>
+          <div class="milestone-label" style="left:70%;top:auto;bottom:-2px">ABM v1.0</div>
+        </td>
+        <!-- W11: Validation -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:90%"></div>
+          <div class="milestone-label" style="left:90%;top:auto;bottom:-2px">Validated</div>
+        </td>
+        <td></td>
+        <!-- W13: Experiments done -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:90%"></div>
+          <div class="milestone-label" style="left:90%;top:auto;bottom:-2px">Exp Done</div>
+        </td>
+        <!-- W14: Draft -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:85%"></div>
+          <div class="milestone-label" style="left:85%;top:auto;bottom:-2px">Draft</div>
+        </td>
+        <td></td>
+        <!-- W16: Defense -->
+        <td style="position:relative">
+          <div class="milestone-marker" style="left:65%"></div>
+          <div class="milestone-label" style="left:65%;top:auto;bottom:-2px">Defense</div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-title">Legend</span>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase1)"></div><span>Math Foundation</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase2)"></div><span>ODE Model + Data</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase3)"></div><span>ABM Design</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase4)"></div><span>Implementation</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase5)"></div><span>Validation</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase6)"></div><span>Experiments</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase7)"></div><span>Thesis Writing</span></div>
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--phase8)"></div><span>Submission</span></div>
+    <div class="legend-item"><div class="legend-diamond"></div><span>Milestone</span></div>
+    <div class="legend-item"><span class="legend-panelist-tag">C1</span><span>Panelist comment task</span></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Institute of Computer Science &middot; University of the Philippines Los Ba&ntilde;os</span>
+    <span class="footer-date"></span>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="export-toast"></div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const TIMELINE_START = new Date(2026, 1, 2); // Feb 2, 2026
+  const TOTAL_WEEKS = 16;
+
+  // ── Walk table: assign phases, task IDs, inject checkboxes ──
+  let currentPhase = null;
+  const taskCounters = {};
+
+  document.querySelectorAll('.gantt-table tr').forEach(row => {
+    if (row.classList.contains('phase-row')) {
+      const num = row.querySelector('.phase-num');
+      currentPhase = num ? num.textContent.trim() : null;
+      row.dataset.phase = currentPhase;
+      taskCounters[currentPhase] = 0;
+      const label = row.querySelector('.phase-group-label');
+      if (label) {
+        const chevron = document.createElement('span');
+        chevron.className = 'chevron';
+        chevron.textContent = '\u25BE';
+        label.appendChild(chevron);
+      }
+    } else if (row.classList.contains('task-row')) {
+      if (currentPhase) {
+        row.dataset.phase = currentPhase;
+        taskCounters[currentPhase]++;
+        const taskId = currentPhase + '.' + taskCounters[currentPhase];
+        row.dataset.taskId = taskId;
+        // Inject checkbox
+        const label = row.querySelector('.task-label');
+        if (label) {
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'task-check';
+          cb.dataset.taskId = taskId;
+          label.insertBefore(cb, label.firstChild);
+          // Tooltip for truncated names
+          const name = label.querySelector('.task-name');
+          if (name) label.title = name.textContent;
+        }
+      }
+    } else if (row.classList.contains('sep-row')) {
+      if (currentPhase) row.dataset.phase = currentPhase;
+    }
+  });
+
+  // ── Progress Data ──
+  let progressData = { lastUpdated: null, tasks: {} };
+
+  // Try localStorage first (for unsaved local changes), then fetch progress.json
+  const cached = localStorage.getItem('sp-progress');
+  if (cached) {
+    try { progressData = JSON.parse(cached); } catch(e) {}
+  }
+
+  fetch('progress.json')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      // Use progress.json as source of truth if it's newer or no local cache
+      if (!cached || (data.lastUpdated && data.lastUpdated >= (progressData.lastUpdated || ''))) {
+        progressData = data;
+        localStorage.setItem('sp-progress', JSON.stringify(data));
+      }
+      applyProgress();
+    })
+    .catch(() => applyProgress());
+
+  function applyProgress() {
+    document.querySelectorAll('.task-row[data-task-id]').forEach(row => {
+      const done = progressData.tasks[row.dataset.taskId] || false;
+      const cb = row.querySelector('.task-check');
+      if (cb) cb.checked = done;
+      row.classList.toggle('completed', done);
+    });
+    updatePhaseCounters();
+    updateOverallProgress();
+    updateLastUpdated();
+  }
+
+  function updateLastUpdated() {
+    const el = document.querySelector('.last-updated');
+    if (el && progressData.lastUpdated) {
+      el.textContent = 'Updated ' + progressData.lastUpdated;
+    }
+  }
+
+  // ── Checkbox Handlers ──
+  document.querySelectorAll('.task-check').forEach(cb => {
+    cb.addEventListener('change', (e) => {
+      e.stopPropagation();
+      const row = cb.closest('.task-row');
+      progressData.tasks[cb.dataset.taskId] = cb.checked;
+      progressData.lastUpdated = new Date().toISOString().split('T')[0];
+      row.classList.toggle('completed', cb.checked);
+      localStorage.setItem('sp-progress', JSON.stringify(progressData));
+      updatePhaseCounters();
+      updateOverallProgress();
+      updateLastUpdated();
+    });
+    cb.addEventListener('click', (e) => e.stopPropagation());
+  });
+
+  // ── Phase Counters ──
+  function updatePhaseCounters() {
+    document.querySelectorAll('.phase-row').forEach(phaseRow => {
+      const phase = phaseRow.dataset.phase;
+      const tasks = document.querySelectorAll('.task-row[data-phase="' + phase + '"]');
+      const done = Array.from(tasks).filter(r => r.classList.contains('completed')).length;
+      const total = tasks.length;
+      let counter = phaseRow.querySelector('.phase-counter');
+      if (!counter) {
+        counter = document.createElement('span');
+        counter.className = 'phase-counter';
+        const label = phaseRow.querySelector('.phase-group-label');
+        const chevron = label.querySelector('.chevron');
+        label.insertBefore(counter, chevron);
+      }
+      counter.textContent = done + '/' + total;
+      counter.classList.toggle('all-done', done === total && total > 0);
+    });
+  }
+
+  // ── Overall Progress ──
+  function updateOverallProgress() {
+    const all = document.querySelectorAll('.task-row[data-task-id]');
+    const done = Array.from(all).filter(r => r.classList.contains('completed')).length;
+    const total = all.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const fill = document.querySelector('.progress-bar-inner');
+    const pctEl = document.querySelector('.progress-pct');
+    const countEl = document.querySelector('.progress-count');
+    if (fill) fill.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+    if (countEl) countEl.textContent = done + ' of ' + total + ' tasks';
+  }
+
+  // ── Today Line ──
+  function drawTodayLine() {
+    const today = new Date();
+    const days = (today - TIMELINE_START) / 86400000;
+    if (days < 0 || days > TOTAL_WEEKS * 7) return;
+    const weekIdx = Math.floor(days / 7);
+    const frac = (days % 7) / 7;
+    const cells = document.querySelectorAll('.week-header-row td');
+    const cell = cells[weekIdx + 1]; // +1 for label column
+    if (!cell) return;
+    const scroll = document.querySelector('.gantt-scroll');
+    const table = document.querySelector('.gantt-table');
+    requestAnimationFrame(() => {
+      const sr = scroll.getBoundingClientRect();
+      const cr = cell.getBoundingClientRect();
+      const left = cr.left - sr.left + scroll.scrollLeft + cr.width * frac;
+      scroll.style.position = 'relative';
+      const line = document.createElement('div');
+      line.className = 'today-line';
+      line.style.left = left + 'px';
+      line.style.height = table.offsetHeight + 'px';
+      scroll.appendChild(line);
+      const lbl = document.createElement('div');
+      lbl.className = 'today-label';
+      lbl.textContent = 'Today';
+      lbl.style.left = left + 'px';
+      scroll.appendChild(lbl);
+    });
+  }
+  drawTodayLine();
+
+  // ── Footer Date ──
+  const fd = document.querySelector('.footer-date');
+  if (fd) fd.textContent = 'Generated ' + new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  // ── Export Progress JSON ──
+  window.exportProgress = function() {
+    const output = {
+      lastUpdated: new Date().toISOString().split('T')[0],
+      tasks: {}
+    };
+    document.querySelectorAll('.task-row[data-task-id]').forEach(row => {
+      output.tasks[row.dataset.taskId] = row.classList.contains('completed');
+    });
+    const json = JSON.stringify(output, null, 2) + '\n';
+    navigator.clipboard.writeText(json).then(() => {
+      showToast('Copied to clipboard! Paste into progress.json and push.');
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = json;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied to clipboard!');
+    });
+  };
+
+  function showToast(msg) {
+    const t = document.querySelector('.export-toast');
+    if (t) {
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+  }
+
+  // ── Collapse / Expand / Filter (existing behavior) ──
+  collapseAll();
+
+  document.querySelectorAll('.phase-row').forEach(row => {
+    row.addEventListener('click', () => {
+      togglePhase(row.dataset.phase);
+      syncModeButtons();
+    });
+  });
+
+  document.querySelectorAll('.filter-bar .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.action === 'overview') { collapseAll(); showAllPhases(); }
+      else if (btn.dataset.action === 'detail') { expandAll(); showAllPhases(); }
+      else if (btn.dataset.filter) { togglePhaseVisibility(btn.dataset.filter, btn); }
+      syncModeButtons();
+    });
+  });
+
+  function togglePhase(phase) {
+    const pr = document.querySelector('.phase-row[data-phase="' + phase + '"]');
+    const ch = document.querySelectorAll('.task-row[data-phase="' + phase + '"], .sep-row[data-phase="' + phase + '"]');
+    if (pr.classList.contains('collapsed')) {
+      pr.classList.remove('collapsed');
+      ch.forEach(r => r.classList.remove('phase-hidden'));
+    } else {
+      pr.classList.add('collapsed');
+      ch.forEach(r => r.classList.add('phase-hidden'));
+    }
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.phase-row').forEach(r => r.classList.add('collapsed'));
+    document.querySelectorAll('.task-row[data-phase], .sep-row[data-phase]').forEach(r => r.classList.add('phase-hidden'));
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.phase-row').forEach(r => r.classList.remove('collapsed'));
+    document.querySelectorAll('.task-row[data-phase], .sep-row[data-phase]').forEach(r => r.classList.remove('phase-hidden'));
+  }
+
+  function togglePhaseVisibility(phase, btn) {
+    const rows = document.querySelectorAll('tr[data-phase="' + phase + '"]');
+    const vis = btn.classList.contains('active');
+    rows.forEach(r => vis ? r.classList.add('phase-filtered-out') : r.classList.remove('phase-filtered-out'));
+    btn.classList.toggle('active', !vis);
+    btn.classList.toggle('dimmed', vis);
+  }
+
+  function showAllPhases() {
+    document.querySelectorAll('tr[data-phase]').forEach(r => r.classList.remove('phase-filtered-out'));
+    document.querySelectorAll('.phase-pill').forEach(b => { b.classList.remove('dimmed'); b.classList.add('active'); });
+  }
+
+  function syncModeButtons() {
+    const all = document.querySelectorAll('.phase-row');
+    const collapsed = Array.from(all).every(r => r.classList.contains('collapsed'));
+    const expanded = Array.from(all).every(r => !r.classList.contains('collapsed'));
+    document.querySelector('[data-action="overview"]').classList.toggle('active', collapsed);
+    document.querySelector('[data-action="detail"]').classList.toggle('active', expanded);
+  }
+});
+</script>
+</body>
+</html>
